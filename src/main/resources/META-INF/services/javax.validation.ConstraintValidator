@@ -1,0 +1,2 @@
+org.zalando.money.validation.MonetaryAmountDecimalMinValidator
+org.zalando.twintip.spring.MonetaryAmountDecimalMaxValidator
