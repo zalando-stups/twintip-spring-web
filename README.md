@@ -31,6 +31,8 @@ twintip:
   yaml: "classpath:api.yml"
 ```
 
+You are done.
+
 ## License
 
 Copyright [2015] Zalando SE
