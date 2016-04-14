@@ -20,6 +20,10 @@ package org.zalando.twintip.spring;
  * #L%
  */
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.hamcrest.FeatureMatcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +45,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
@@ -114,11 +119,22 @@ public class SchemaResourceIT {
     @Test
     public void apiWithAcceptAsYaml() throws Exception {
         final MediaType yaml = MediaType.parseMediaType("application/yaml");
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode expected = mapper.readTree(YAML);
 
         mvc.perform(request(HttpMethod.GET, API_PATH)
                 .accept(yaml))
                 .andExpect(content().contentType(yaml))
-                .andExpect(content().string(YAML));
+                .andExpect(content().string(new FeatureMatcher<String, JsonNode>(equalTo(expected), "yaml", "yaml") {
+                    @Override
+                    protected JsonNode featureValueOf(String actual) {
+                        try {
+                            return mapper.readTree(actual);
+                        } catch (IOException e) {
+                            throw new AssertionError(e);
+                        }
+                    }
+                }));
     }
 
     @EnableWebMvc

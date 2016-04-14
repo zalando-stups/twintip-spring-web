@@ -21,7 +21,10 @@ package org.zalando.twintip.spring;
  */
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -33,38 +36,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Optional;
-
-import static java.lang.System.lineSeparator;
-import static java.util.stream.Collectors.joining;
 
 @RestController
 public class SchemaResource {
 
     public static final String SCHEMA_DISCOVERY_MAPPING = "/.well-known/schema-discovery";
 
-    private final Yaml yaml = new Yaml();
+    private final ObjectMapper json = new ObjectMapper().registerModule(new Jdk8Module());
+    private final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
-    private final ObjectMapper objectMapper;
-
-    private final String apiYamlValue;
-
-    private final String apiJsonValue;
+    private final JsonNode node;
 
     @Autowired
     public SchemaResource(@Value("${twintip.yaml}") final Resource yamlResource) throws IOException {
-        this.objectMapper = new ObjectMapper();
-        apiYamlValue = consume(yamlResource.getInputStream());
-        apiJsonValue = yamlToJson(apiYamlValue);
+        this.node = yaml.readTree(yamlResource.getInputStream());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = SCHEMA_DISCOVERY_MAPPING, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = SCHEMA_DISCOVERY_MAPPING,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public SchemaDiscovery discover(
             @Value("${twintip.mapping}") final String mapping,
@@ -73,17 +65,19 @@ public class SchemaResource {
         return new SchemaDiscovery(mapping, type, uiPath.isEmpty() ? Optional.empty() : Optional.of(uiPath));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
+    @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> schemaAsJson() {
-        return response(apiJsonValue);
+    public ResponseEntity<String> jsonSchema() throws JsonProcessingException {
+        return response(json.writeValueAsString(node));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}", produces = {"application/yaml", "application/x-yaml", "text/yaml"})
+    @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
+            produces = {"application/yaml", "application/x-yaml", "text/yaml"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ResponseEntity<String> schemaAsYaml() {
-        return response(apiYamlValue);
+    public ResponseEntity<String> yamlSchema() throws JsonProcessingException {
+        return response(yaml.writeValueAsString(node));
     }
 
     private ResponseEntity<String> response(final String body) {
@@ -93,17 +87,6 @@ public class SchemaResource {
                 .header("Access-Control-Max-Age", "3600")
                 .header("Access-Control-Allow-Headers", "")
                 .body(body);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String yamlToJson(final String yamlValue) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(yaml.load(yamlValue));
-    }
-
-    public static String consume(final InputStream inputStream) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            return reader.lines().collect(joining(lineSeparator()));
-        }
     }
 
 }
