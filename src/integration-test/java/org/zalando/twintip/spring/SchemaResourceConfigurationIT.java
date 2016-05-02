@@ -20,12 +20,6 @@ package org.zalando.twintip.spring;
  * #L%
  */
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.hamcrest.FeatureMatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -41,16 +34,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,72 +48,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @WebAppConfiguration
 @TestPropertySource(properties = {
-    "twintip.mapping=" + SchemaResourceIT.API_PATH,
-    "twintip.yaml=classpath:/test.yml"
+    "twintip.mapping=" + SchemaResourceConfigurationIT.API_PATH,
+    "twintip.yaml=classpath:/test.yml",
+    "twintip.ui=" + SchemaResourceConfigurationIT.UI_PATH,
+    "twintip.type=swagger-3.0",
+    "twintip.cors=false"
 })
-public class SchemaResourceIT {
+public class SchemaResourceConfigurationIT {
 
-    static final String API_PATH = "/api";
-
-    @Value("${twintip.yaml}")
-    private Resource yamlResource;
+    static final String API_PATH = "/super-api";
+    static final String UI_PATH = "/ui";
 
     @Autowired
     private MockMvc mvc;
 
     @Test
-    public void schemaDiscoveryWithDefaults() throws Exception {
+    public void schemaDiscoveryWithUi() throws Exception {
         mvc.perform(request(HttpMethod.GET, SchemaResource.SCHEMA_DISCOVERY_MAPPING))
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.schema_url", is(API_PATH)))
-            .andExpect(jsonPath("$.schema_type", is("swagger-2.0")))
-            .andExpect(jsonPath("$", not(hasKey("ui_url"))));
+            .andExpect(jsonPath("$.ui_url", is(UI_PATH)))
+            .andExpect(jsonPath("$.schema_type", is("swagger-3.0")));
     }
 
     @Test
-    public void apiWithoutAcceptAsJson() throws Exception {
+    public void apiWithCorsDisabled() throws Exception {
         mvc.perform(request(HttpMethod.GET, API_PATH))
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.field", is("value")))
-            .andExpect(jsonPath("$.col", hasSize(3)));
-    }
-
-    @Test
-    public void apiWithAcceptAsJson() throws Exception {
-        mvc.perform(request(HttpMethod.GET, API_PATH)
-            .accept(APPLICATION_JSON))
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.field", is("value")));
-    }
-
-    @Test
-    public void apiWithAcceptAsYaml() throws Exception {
-        final MediaType yaml = MediaType.parseMediaType("application/yaml");
-        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        final JsonNode expected = mapper.readTree(yamlResource.getInputStream());
-
-        mvc.perform(request(HttpMethod.GET, API_PATH)
-            .accept(yaml))
-            .andExpect(content().contentType(yaml))
-            .andExpect(content().string(new FeatureMatcher<String, JsonNode>(equalTo(expected), "yaml", "yaml") {
-                @Override
-                protected JsonNode featureValueOf(String actual) {
-                    try {
-                        return mapper.readTree(actual);
-                    } catch (IOException e) {
-                        throw new AssertionError(e);
-                    }
-                }
-            }));
-    }
-
-    @Test
-    public void apiWithCorsEnabled() throws Exception {
-        mvc.perform(request(HttpMethod.GET, API_PATH))
-            .andExpect(header().string("Access-Control-Allow-Origin", "*"))
-            .andExpect(header().string("Access-Control-Allow-Methods", "GET"))
-            .andExpect(header().string("Access-Control-Max-Age", "3600"))
-            .andExpect(header().string("Access-Control-Allow-Headers", ""));
+            .andExpect(header().doesNotExist("Access-Control-Allow-Origin"))
+            .andExpect(header().doesNotExist("Access-Control-Allow-Methods"))
+            .andExpect(header().doesNotExist("Access-Control-Max-Age"))
+            .andExpect(header().doesNotExist("Access-Control-Allow-Headers"));
     }
 
     @EnableWebMvc

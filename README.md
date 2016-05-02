@@ -5,7 +5,7 @@
 [![Release](https://img.shields.io/github/release/zalando/twintip-spring-web.svg)](https://github.com/zalando/twintip-spring-web/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/org.zalando/twintip-spring-web.svg)](https://maven-badges.herokuapp.com/maven-central/org.zalando/twintip-spring-web)
 
-Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires. 
+Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires.
 See the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
 
 ## Usage
@@ -22,7 +22,7 @@ public class YourConfigration {
 }
 ```
 
-Next you need to provide the API definition and decide where clients should find it. 
+Next you need to provide the API definition and decide where clients should find it.
 You can do this in your *application.properties* or [*application.yml*](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-yaml).
 
 ```yaml
@@ -32,6 +32,10 @@ twintip:
 ```
 
 You are done.
+
+## Other options
+
+SchemaResource will send CORS Access-Control-* headers by default. You can disable this by setting twintip.cors property to false.
 
 ## License
 
