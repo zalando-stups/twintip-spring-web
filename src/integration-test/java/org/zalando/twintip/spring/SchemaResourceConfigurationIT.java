@@ -38,6 +38,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -49,10 +51,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @TestPropertySource(properties = {
     "twintip.mapping=" + SchemaResourceConfigurationIT.API_PATH,
-    "twintip.yaml=classpath:/test.yml",
+    "twintip.yaml=classpath:/petstore.yml",
     "twintip.ui=" + SchemaResourceConfigurationIT.UI_PATH,
     "twintip.type=swagger-3.0",
-    "twintip.cors=false"
+    "twintip.cors=false",
+    "twintip.baseUrl=https://example.com/example-api",
 })
 public class SchemaResourceConfigurationIT {
 
@@ -78,6 +81,15 @@ public class SchemaResourceConfigurationIT {
             .andExpect(header().doesNotExist("Access-Control-Allow-Methods"))
             .andExpect(header().doesNotExist("Access-Control-Max-Age"))
             .andExpect(header().doesNotExist("Access-Control-Allow-Headers"));
+    }
+
+    @Test
+    public void apiWithBaseUrl() throws Exception {
+        mvc.perform(request(HttpMethod.GET, API_PATH))
+            .andExpect(jsonPath("$.host", is("example.com")))
+            .andExpect(jsonPath("$.basePath", is("/example-api")))
+            .andExpect(jsonPath("$.schemes", hasSize(1)))
+            .andExpect(jsonPath("$.schemes", hasItems("https")));
     }
 
     @EnableWebMvc
