@@ -49,31 +49,33 @@ public class SchemaResource {
     private final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
     private final JsonNode node;
+    private final boolean enableCors;
 
     @Autowired
-    public SchemaResource(@Value("${twintip.yaml}") final Resource yamlResource) throws IOException {
+    public SchemaResource(@Value("${twintip.yaml}") final Resource yamlResource, @Value("${twintip.cors:true}") final boolean enableCors) throws IOException {
         this.node = yaml.readTree(yamlResource.getInputStream());
+        this.enableCors = enableCors;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = SCHEMA_DISCOVERY_MAPPING,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public SchemaDiscovery discover(
-            @Value("${twintip.mapping}") final String mapping,
-            @Value("${twintip.type:swagger-2.0}") final String type,
-            @Value("${twintip.ui:}") final String uiPath) {
+        @Value("${twintip.mapping}") final String mapping,
+        @Value("${twintip.type:swagger-2.0}") final String type,
+        @Value("${twintip.ui:}") final String uiPath) {
         return new SchemaDiscovery(mapping, type, uiPath.isEmpty() ? Optional.empty() : Optional.of(uiPath));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
+        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> jsonSchema() throws JsonProcessingException {
         return response(json.writeValueAsString(node));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
-            produces = {"application/yaml", "application/x-yaml", "text/yaml"})
+        produces = {"application/yaml", "application/x-yaml", "text/yaml"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<String> yamlSchema() throws JsonProcessingException {
@@ -81,12 +83,14 @@ public class SchemaResource {
     }
 
     private ResponseEntity<String> response(final String body) {
-        return ResponseEntity.ok()
+        final ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        if (enableCors) {
+            builder
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET")
                 .header("Access-Control-Max-Age", "3600")
-                .header("Access-Control-Allow-Headers", "")
-                .body(body);
+                .header("Access-Control-Allow-Headers", "");
+        }
+        return builder.body(body);
     }
-
 }
