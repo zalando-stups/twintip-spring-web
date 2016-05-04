@@ -23,8 +23,6 @@ package org.zalando.twintip.spring;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Optional;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 public class SchemaDiscovery {
@@ -37,9 +35,9 @@ public class SchemaDiscovery {
 
     @JsonProperty("ui_url")
     @JsonInclude(NON_EMPTY)
-    private final Optional<String> uiUrl;
+    private final String uiUrl;
 
-    public SchemaDiscovery(final String schemaUrl, final String schemaType, final Optional<String> uiUrl) {
+    public SchemaDiscovery(final String schemaUrl, final String schemaType, final String uiUrl) {
         this.schemaUrl = schemaUrl;
         this.schemaType = schemaType;
         this.uiUrl = uiUrl;
@@ -53,7 +51,7 @@ public class SchemaDiscovery {
         return schemaType;
     }
 
-    public Optional<String> getUiUrl() {
+    public String getUiUrl() {
         return uiUrl;
     }
 }

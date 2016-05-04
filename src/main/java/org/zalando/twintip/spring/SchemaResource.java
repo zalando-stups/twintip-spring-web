@@ -24,7 +24,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -38,14 +37,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 public class SchemaResource {
 
     public static final String SCHEMA_DISCOVERY_MAPPING = "/.well-known/schema-discovery";
 
-    private final ObjectMapper json = new ObjectMapper().registerModule(new Jdk8Module());
+    private final ObjectMapper json = new ObjectMapper();
     private final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
     private final JsonNode node;
@@ -64,7 +62,7 @@ public class SchemaResource {
         @Value("${twintip.mapping}") final String mapping,
         @Value("${twintip.type:swagger-2.0}") final String type,
         @Value("${twintip.ui:}") final String uiPath) {
-        return new SchemaDiscovery(mapping, type, uiPath.isEmpty() ? Optional.empty() : Optional.of(uiPath));
+        return new SchemaDiscovery(mapping, type, uiPath);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
