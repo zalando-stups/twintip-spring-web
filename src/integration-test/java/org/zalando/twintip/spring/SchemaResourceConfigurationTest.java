@@ -48,13 +48,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @WebAppConfiguration
 @TestPropertySource(properties = {
-    "twintip.mapping=" + SchemaResourceConfigurationIT.API_PATH,
+    "twintip.mapping=" + SchemaResourceConfigurationTest.API_PATH,
     "twintip.yaml=classpath:/test.yml",
-    "twintip.ui=" + SchemaResourceConfigurationIT.UI_PATH,
+    "twintip.ui=" + SchemaResourceConfigurationTest.UI_PATH,
     "twintip.type=swagger-3.0",
     "twintip.cors=false"
 })
-public class SchemaResourceConfigurationIT {
+public class SchemaResourceConfigurationTest {
 
     static final String API_PATH = "/super-api";
     static final String UI_PATH = "/ui";
@@ -80,8 +80,8 @@ public class SchemaResourceConfigurationIT {
             .andExpect(header().doesNotExist("Access-Control-Allow-Headers"));
     }
 
-    @EnableWebMvc
     @Configuration
+    @EnableWebMvc
     @Import(SchemaResource.class)
     public static class TestConfiguration {
 

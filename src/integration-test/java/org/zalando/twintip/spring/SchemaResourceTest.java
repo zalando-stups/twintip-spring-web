@@ -61,10 +61,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration
 @WebAppConfiguration
 @TestPropertySource(properties = {
-    "twintip.mapping=" + SchemaResourceIT.API_PATH,
+    "twintip.mapping=" + SchemaResourceTest.API_PATH,
     "twintip.yaml=classpath:/test.yml"
 })
-public class SchemaResourceIT {
+public class SchemaResourceTest {
 
     static final String API_PATH = "/api";
 
@@ -129,8 +129,8 @@ public class SchemaResourceIT {
             .andExpect(header().string("Access-Control-Allow-Headers", ""));
     }
 
-    @EnableWebMvc
     @Configuration
+    @EnableWebMvc
     @Import(SchemaResource.class)
     public static class TestConfiguration {
 
