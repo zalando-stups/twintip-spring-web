@@ -37,6 +37,8 @@ You are done.
 
 SchemaResource will send CORS Access-Control-* headers by default. You can disable this by setting twintip.cors property to false.
 
+Host, port, schemes and basePath inside of the API definition can be overridden by setting property twintip.baseUrl to full base URL of API.
+
 ## License
 
 Copyright [2015] Zalando SE
