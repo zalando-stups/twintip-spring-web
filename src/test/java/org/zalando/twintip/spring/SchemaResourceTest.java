@@ -51,6 +51,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import org.hamcrest.core.StringStartsWith;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -127,6 +128,17 @@ public class SchemaResourceTest {
             .andExpect(header().string("Access-Control-Allow-Methods", "GET"))
             .andExpect(header().string("Access-Control-Max-Age", "3600"))
             .andExpect(header().string("Access-Control-Allow-Headers", ""));
+    }
+
+    @Test
+    public void apiPrettyPrint() throws Exception {
+        final String indented
+            = "{\n"
+            + "  \"swagger\" : \"2.0\",\n"
+            + "  \"info\" : {\n";
+
+        mvc.perform(request(HttpMethod.GET, API_PATH))
+            .andExpect(content().string(StringStartsWith.startsWith(indented)));
     }
 
     @Configuration

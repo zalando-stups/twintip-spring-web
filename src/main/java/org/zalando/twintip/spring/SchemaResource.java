@@ -22,6 +22,7 @@ package org.zalando.twintip.spring;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,8 +46,8 @@ public class SchemaResource {
 
     public static final String SCHEMA_DISCOVERY_MAPPING = "/.well-known/schema-discovery";
 
-    private final ObjectMapper json = new ObjectMapper();
-    private final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
+    private final ObjectMapper json;
+    private final ObjectMapper yaml;
 
     private final Map<String, Object> node;
     private final boolean enableCors;
@@ -57,6 +58,9 @@ public class SchemaResource {
         @Value("${twintip.yaml}") final Resource yamlResource,
         @Value("${twintip.cors:true}") final boolean enableCors,
         @Value("${twintip.baseUrl:}") final String baseUrl) throws IOException {
+
+        this.json = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        this.yaml = new ObjectMapper(new YAMLFactory());
 
         this.node = yaml.readValue(yamlResource.getInputStream(), Map.class);
         this.enableCors = enableCors;
