@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @TestPropertySource(properties = {
     "twintip.mapping=" + SchemaResourceTest.API_PATH,
-    "twintip.yaml=classpath:/test.yml"
+    "twintip.yaml=classpath:/petstore.yml"
 })
 public class SchemaResourceTest {
 
@@ -87,8 +87,8 @@ public class SchemaResourceTest {
     public void apiWithoutAcceptAsJson() throws Exception {
         mvc.perform(request(HttpMethod.GET, API_PATH))
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.field", is("value")))
-            .andExpect(jsonPath("$.col", hasSize(3)));
+            .andExpect(jsonPath("$.host", is("petstore.swagger.io")))
+            .andExpect(jsonPath("$.schemes", hasSize(1)));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class SchemaResourceTest {
         mvc.perform(request(HttpMethod.GET, API_PATH)
             .accept(APPLICATION_JSON))
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.field", is("value")));
+            .andExpect(jsonPath("$.host", is("petstore.swagger.io")));
     }
 
     @Test

@@ -21,7 +21,6 @@ package org.zalando.twintip.spring;
  */
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class SchemaResource {
@@ -46,13 +48,22 @@ public class SchemaResource {
     private final ObjectMapper json = new ObjectMapper();
     private final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
-    private final JsonNode node;
+    private final Map<String, Object> node;
     private final boolean enableCors;
 
     @Autowired
-    public SchemaResource(@Value("${twintip.yaml}") final Resource yamlResource, @Value("${twintip.cors:true}") final boolean enableCors) throws IOException {
-        this.node = yaml.readTree(yamlResource.getInputStream());
+    @SuppressWarnings("unchecked")
+    public SchemaResource(
+        @Value("${twintip.yaml}") final Resource yamlResource,
+        @Value("${twintip.cors:true}") final boolean enableCors,
+        @Value("${twintip.baseUrl:}") final String baseUrl) throws IOException {
+
+        this.node = yaml.readValue(yamlResource.getInputStream(), Map.class);
         this.enableCors = enableCors;
+
+        if (!baseUrl.isEmpty()) {
+            updateApiUrl(node, URI.create(baseUrl));
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET, value = SCHEMA_DISCOVERY_MAPPING,
@@ -90,5 +101,11 @@ public class SchemaResource {
                 .header("Access-Control-Allow-Headers", "");
         }
         return builder.body(body);
+    }
+
+    private void updateApiUrl(final Map<String, Object> apiDef, final URI baseUrl) {
+        apiDef.put("host", Objects.requireNonNull(baseUrl.getHost(), "baseUrl must contain host") + (baseUrl.getPort() != -1 ? ":" + baseUrl.getPort() : ""));
+        apiDef.put("schemes", new String[]{Objects.requireNonNull(baseUrl.getScheme(), "baseUrl must contain scheme")});
+        apiDef.put("basePath", Objects.requireNonNull(baseUrl.getPath(), "baseUrl must contain path"));
     }
 }
