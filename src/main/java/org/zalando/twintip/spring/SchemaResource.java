@@ -21,6 +21,7 @@ package org.zalando.twintip.spring;
  */
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -53,16 +54,16 @@ public class SchemaResource {
     private final boolean enableCors;
 
     @Autowired
-    @SuppressWarnings("unchecked")
     public SchemaResource(
-        @Value("${twintip.yaml}") final Resource yamlResource,
-        @Value("${twintip.cors:true}") final boolean enableCors,
-        @Value("${twintip.baseUrl:}") final String baseUrl) throws IOException {
+            @Value("${twintip.yaml}") final Resource yamlResource,
+            @Value("${twintip.cors:true}") final boolean enableCors,
+            @Value("${twintip.baseUrl:}") final String baseUrl) throws IOException {
 
         this.json = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
         this.yaml = new ObjectMapper(new YAMLFactory());
 
-        this.node = yaml.readValue(yamlResource.getInputStream(), Map.class);
+        this.node = yaml.readValue(yamlResource.getInputStream(), new TypeReference<Map<String, Object>>() {
+        });
         this.enableCors = enableCors;
 
         if (!baseUrl.isEmpty()) {
@@ -71,24 +72,24 @@ public class SchemaResource {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = SCHEMA_DISCOVERY_MAPPING,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public SchemaDiscovery discover(
-        @Value("${twintip.mapping}") final String mapping,
-        @Value("${twintip.type:swagger-2.0}") final String type,
-        @Value("${twintip.ui:}") final String uiPath) {
+            @Value("${twintip.mapping}") final String mapping,
+            @Value("${twintip.type:swagger-2.0}") final String type,
+            @Value("${twintip.ui:}") final String uiPath) {
         return new SchemaDiscovery(mapping, type, uiPath);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> jsonSchema() throws JsonProcessingException {
         return response(json.writeValueAsString(node));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "${twintip.mapping}",
-        produces = {"application/yaml", "application/x-yaml", "text/yaml"})
+            produces = {"application/yaml", "application/x-yaml", "text/yaml"})
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<String> yamlSchema() throws JsonProcessingException {
@@ -99,10 +100,10 @@ public class SchemaResource {
         final ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
         if (enableCors) {
             builder
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET")
-                .header("Access-Control-Max-Age", "3600")
-                .header("Access-Control-Allow-Headers", "");
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "GET")
+                    .header("Access-Control-Max-Age", "3600")
+                    .header("Access-Control-Allow-Headers", "");
         }
         return builder.body(body);
     }
