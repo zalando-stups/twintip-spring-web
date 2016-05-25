@@ -20,8 +20,6 @@ package org.zalando.twintip.spring;
  * #L%
  */
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -29,29 +27,31 @@ import org.hamcrest.FeatureMatcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.io.Resource;
-import org.springframework.test.context.TestPropertySource;
+
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import org.hamcrest.core.StringStartsWith;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -63,7 +63,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @TestPropertySource(properties = {
     "twintip.mapping=" + SchemaResourceTest.API_PATH,
-    "twintip.yaml=classpath:/petstore.yml"
+    "twintip.yaml=classpath:/petstore.yml",
+    "twintip.baseUrl=http://petstore.swagger.io/v1"
 })
 public class SchemaResourceTest {
 
@@ -138,7 +139,7 @@ public class SchemaResourceTest {
             + "  \"info\" : {\n";
 
         mvc.perform(request(HttpMethod.GET, API_PATH))
-            .andExpect(content().string(StringStartsWith.startsWith(indented)));
+            .andExpect(content().string(startsWith(indented)));
     }
 
     @Configuration
