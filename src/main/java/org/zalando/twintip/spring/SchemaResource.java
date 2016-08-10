@@ -66,7 +66,7 @@ public class SchemaResource {
         });
         this.enableCors = enableCors;
 
-        if (!baseUrl.isEmpty()) {
+        if (baseUrl != null && !baseUrl.isEmpty()) {
             updateApiUrl(node, URI.create(baseUrl));
         }
     }
