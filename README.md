@@ -1,9 +1,11 @@
 # Twintip Schema Discovery for Spring Web
 
-[![Build Status](https://img.shields.io/travis/zalando/twintip-spring-web.svg)](https://travis-ci.org/zalando/twintip-spring-web)
-[![Coverage Status](https://img.shields.io/coveralls/zalando/twintip-spring-web.svg)](https://coveralls.io/r/zalando/twintip-spring-web)
-[![Release](https://img.shields.io/github/release/zalando/twintip-spring-web.svg)](https://github.com/zalando/twintip-spring-web/releases)
+[![Build Status](https://img.shields.io/travis/zalando-stups/twintip-spring-web/master.svg)](https://travis-ci.org/zalando-stups/twintip-spring-web)
+[![Coverage Status](https://img.shields.io/coveralls/zalando-stups/twintip-spring-web/master.svg)](https://coveralls.io/r/zalando-stups/twintip-spring-web)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.zalando/twintip-spring-web/badge.svg)](http://www.javadoc.io/doc/org.zalando/twintip-spring-web)
+[![Release](https://img.shields.io/github/release/zalando-stups/twintip-spring-web.svg)](https://github.com/zalando-stups/twintip-spring-web/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/org.zalando/twintip-spring-web.svg)](https://maven-badges.herokuapp.com/maven-central/org.zalando/twintip-spring-web)
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/zalando-stups/twintip-spring-web/master/LICENSE)
 
 Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires.
 See the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
@@ -38,19 +40,3 @@ You are done.
 SchemaResource will send CORS Access-Control-* headers by default. You can disable this by setting twintip.cors property to false.
 
 Host, port, schemes and basePath inside of the API definition can be overridden by setting property twintip.baseUrl to full base URL of API.
-
-## License
-
-Copyright [2015] Zalando SE
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
