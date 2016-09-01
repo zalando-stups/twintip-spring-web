@@ -5,7 +5,7 @@
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.zalando/twintip-spring-web/badge.svg)](http://www.javadoc.io/doc/org.zalando/twintip-spring-web)
 [![Release](https://img.shields.io/github/release/zalando-stups/twintip-spring-web.svg)](https://github.com/zalando-stups/twintip-spring-web/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/org.zalando/twintip-spring-web.svg)](https://maven-badges.herokuapp.com/maven-central/org.zalando/twintip-spring-web)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/zalando-stups/twintip-spring-web/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/zalando-stups/twintip-spring-web/master/LICENSE)
 
 Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires.
 See the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
