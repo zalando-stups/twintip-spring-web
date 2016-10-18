@@ -8,9 +8,32 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/zalando-stups/twintip-spring-web/master/LICENSE)
 
 Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires.
-See the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
+Check the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
 
-## Usage
+## Features
+
+- never think about your Twintip-compatible schema discovery endpoint ever again
+
+## Dependencies
+
+- Java 8
+- Any build tool using Maven Central, or direct download
+- Servlet Container
+- Spring
+
+## Installation
+
+Add the following dependency to your project:
+
+```xml
+<dependency>
+    <groupId>org.zalando</groupId>
+    <artifactId>twintip-spring-web</artifactId>
+    <version>${twintip-spring-web.version}</version>
+</dependency>
+```
+
+## Configuration
 
 First make sure that the endpoints are mapped into your application.
 
@@ -25,7 +48,8 @@ public class YourConfigration {
 ```
 
 Next you need to provide the API definition and decide where clients should find it.
-You can do this in your *application.properties* or [*application.yml*](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-yaml).
+You can do this in your *application.properties* or 
+[*application.yml*](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-yaml).
 
 ```yaml
 twintip:
@@ -33,10 +57,19 @@ twintip:
   yaml: "classpath:api.yml"
 ```
 
-You are done.
+### CORS Support
 
-## Other options
+SchemaResource will send CORS Access-Control-* headers by default. You can disable this by setting `twintip.cors`
+property to false.
 
-SchemaResource will send CORS Access-Control-* headers by default. You can disable this by setting twintip.cors property to false.
+Host, port, schemes and base path inside of the API definition can be overridden by setting the `twintip.baseUrl` 
+property to full base URL of API.
 
-Host, port, schemes and basePath inside of the API definition can be overridden by setting property twintip.baseUrl to full base URL of API.
+## Getting Help
+
+If you have questions, concerns, bug reports, etc., please file an issue in this repository's [Issue Tracker](../../issues).
+
+## Getting Involved/Contributing
+
+To contribute, simply make a pull request and add a brief description (1-2 sentences) of your addition or change. For
+more details, check the [contribution guidelines](CONTRIBUTING.md).
