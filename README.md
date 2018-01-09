@@ -7,8 +7,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.zalando/twintip-spring-web.svg)](https://maven-badges.herokuapp.com/maven-central/org.zalando/twintip-spring-web)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/zalando-stups/twintip-spring-web/master/LICENSE)
 
-Twintipify your Spring Web MVC application. This library exposes all the endpoints TWINTIP requires.
-Check the documentation for [TWINTIP](http://stups.readthedocs.org/en/latest/components/twintip.html).
+Twintipify your Spring Web MVC application. This library exposes your API schema at `/.well-known/schema-discovery` as specified in our [RESTful API Guidelines](http://zalando.github.io/restful-api-guidelines/#192). *Twintip* was the former API crawler that was tasked with finding and indexing API schemas, hence the name of this library.
 
 ## Features
 
