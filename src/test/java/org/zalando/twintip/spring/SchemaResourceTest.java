@@ -59,7 +59,7 @@ public class SchemaResourceTest {
     @Test
     public void schemaDiscoveryWithDefaults() throws Exception {
         mvc.perform(request(HttpMethod.GET, SchemaResource.SCHEMA_DISCOVERY_MAPPING))
-            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
             .andExpect(jsonPath("$.schema_url", is(API_PATH)))
             .andExpect(jsonPath("$.schema_type", is("swagger-2.0")))
             .andExpect(jsonPath("$", not(hasKey("ui_url"))));
@@ -68,7 +68,7 @@ public class SchemaResourceTest {
     @Test
     public void apiWithoutAcceptAsJson() throws Exception {
         mvc.perform(request(HttpMethod.GET, API_PATH))
-            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
             .andExpect(jsonPath("$.host", is("petstore.swagger.io")))
             .andExpect(jsonPath("$.schemes", hasSize(1)));
     }
@@ -77,7 +77,7 @@ public class SchemaResourceTest {
     public void apiWithAcceptAsJson() throws Exception {
         mvc.perform(request(HttpMethod.GET, API_PATH)
             .accept(APPLICATION_JSON))
-            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
             .andExpect(jsonPath("$.host", is("petstore.swagger.io")));
     }
 
@@ -89,7 +89,7 @@ public class SchemaResourceTest {
 
         mvc.perform(request(HttpMethod.GET, API_PATH)
             .accept(yaml))
-            .andExpect(content().contentType(yaml))
+            .andExpect(content().contentTypeCompatibleWith(yaml))
             .andExpect(content().string(new FeatureMatcher<String, JsonNode>(equalTo(expected), "yaml", "yaml") {
                 @Override
                 protected JsonNode featureValueOf(String actual) {
