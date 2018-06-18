@@ -76,7 +76,7 @@ public class SchemaResourcePropertiesNullValueTest {
     @Test
     public void apiDefaultBaseUrl() throws Exception {
         mvc.perform(request(HttpMethod.GET, "/api"))
-            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
             .andExpect(jsonPath("$.host", is("petstore.swagger.io")))
             .andExpect(jsonPath("$.schemes", hasSize(1)));
     }

@@ -48,7 +48,7 @@ public class SchemaResourceConfigurationTest {
     @Test
     public void schemaDiscoveryWithUi() throws Exception {
         mvc.perform(request(HttpMethod.GET, SchemaResource.SCHEMA_DISCOVERY_MAPPING))
-            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
             .andExpect(jsonPath("$.schema_url", is(API_PATH)))
             .andExpect(jsonPath("$.ui_url", is(UI_PATH)))
             .andExpect(jsonPath("$.schema_type", is("swagger-3.0")));
