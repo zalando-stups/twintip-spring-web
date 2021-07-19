@@ -14,7 +14,7 @@ Twintipify your Spring Web MVC application. This library exposes your API schema
 
 ## Dependencies
 
-- Java 8
+- Java 11
 - Any build tool using Maven Central, or direct download
 - Servlet Container
 - Spring
