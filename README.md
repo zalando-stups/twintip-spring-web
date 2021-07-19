@@ -1,7 +1,6 @@
 # Twintip Schema Discovery for Spring Web
 
 [![Build Status](https://img.shields.io/travis/zalando-stups/twintip-spring-web/master.svg)](https://travis-ci.org/zalando-stups/twintip-spring-web)
-[![Coverage Status](https://img.shields.io/coveralls/zalando-stups/twintip-spring-web/master.svg)](https://coveralls.io/r/zalando-stups/twintip-spring-web)
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.zalando/twintip-spring-web/badge.svg)](http://www.javadoc.io/doc/org.zalando/twintip-spring-web)
 [![Release](https://img.shields.io/github/release/zalando-stups/twintip-spring-web.svg)](https://github.com/zalando-stups/twintip-spring-web/releases)
 [![Maven Central](https://img.shields.io/maven-central/v/org.zalando/twintip-spring-web.svg)](https://maven-badges.herokuapp.com/maven-central/org.zalando/twintip-spring-web)
