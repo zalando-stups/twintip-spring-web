@@ -1,3 +1,7 @@
+# Twintip Status
+
+The project is no longer maintained. Consider to use alternatives, e.g. [springdoc](https://springdoc.org/#Introduction). 
+
 # Twintip Schema Discovery for Spring Web
 
 [![Build Status](https://img.shields.io/travis/zalando-stups/twintip-spring-web/master.svg)](https://travis-ci.org/zalando-stups/twintip-spring-web)
